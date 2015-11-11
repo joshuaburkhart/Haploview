@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Initial Set-Up -->
+
+<project name="HaploView" default="main" basedir=".">
+
+   <path id="haploview.root">
+     <pathelement location="${basedir}"/>
+   </path>
+
+
+
+<!-- Get all the files in the /resources directory and add them to the -->
+<!-- Classpath -->
+
+ <path id="library.classpath">
+   <fileset dir="resources/">
+       <include name="*.jar"/>
+       <include name="*.zip"/>
+       <include name="jfreechart/*.jar"/>
+       <include name="axiom/*.jar"/>
+     </fileset>
+   <fileset dir="docs/">
+       <include name="HaploHelp.jar"/>
+   </fileset>
+</path>
+
+ <!-- =========================================================== -->
+ <!-- Initialization                                              -->
+ <!-- =========================================================== -->
+<!-- Setup project roots -->
+ <target name="init">
+    <property name="haploview.root" value="${basedir}"/>
+    <property name="haploview.build" value="${haploview.root}/build"/>
+    <property name="haploview.dist" value="${haploview.root}/dist"/>
+    <property name="haploview.classes" value="${haploview.build}/classes"/>
+    <property name="haploview.src" value="${haploview.root}"/>
+    <property name="haploview.lib" value="${haploview.root}/resources"/>
+    <property name="haploview.package" value="edu/mit/wi/"/>
+    <tstamp>
+      <format property="build.number" pattern="yyyyMMddHHmm"/>
+    </tstamp>
+</target>
+
+<!-- Prepare src directory for compilation step -->
+
+<target name="prepare-compile" depends="init">
+    <mkdir dir="${haploview.classes}"/>
+</target>
+
+<!-- Compile the Haploview application -->
+
+<target name="compile-haploview" depends="prepare-compile">
+   <javac srcdir="${haploview.src}" destdir="${haploview.classes}"
+   includes="${haploview.package}/**" debug="on" source="1.4" target="1.4">
+   <classpath refid="library.classpath"/>
+   </javac>
+
+   <copy file="resources/orator.raw" todir="build/classes/edu/mit/wi/haploview/"/>
+</target>
+
+
+
+<!-- this target makes the jar with HVWrap as the main class, which -->
+<!-- uses automagic -Xmx stuff, and suppresses error output -->
+<target name = "haploview-release" depends="compile-haploview">
+   <jar jarfile="Haploview.jar">
+     <fileset dir="${haploview.classes}">
+       <include name="edu/mit/wi/**/**"/>
+     </fileset>
+     <manifest>
+       <attribute name="Built-By" value="${user.name}"/>
+       <attribute name="Main-Class" value="edu.mit.wi.haploview.HVWrap"/>
+     </manifest>
+     <zipfileset src="resources/JimiProClasses.zip"/>
+     <zipfileset src="resources/jh.jar"/>
+     <zipfileset src="docs/HaploHelp.jar"/>
+     <zipfileset src="resources/jgrapht-0.5.3.jar"/>
+     <zipfileset src="resources/log4j-1.2.14.jar"/>
+     <zipfileset src="resources/jfreechart/jfreechart-1.0.6.jar"/>
+     <zipfileset src="resources/jfreechart/jcommon-1.0.10.jar"/>
+     <zipfileset src="resources/jfreechart/batik-xml.jar"/>
+     <zipfileset src="resources/jfreechart/xml-apis.jar"/>
+     <zipfileset src="resources/jfreechart/batik-awt-util.jar"/>
+     <zipfileset src="resources/jfreechart/batik-dom.jar"/>
+     <zipfileset src="resources/jfreechart/batik-svggen.jar"/>
+     <zipfileset src="resources/jfreechart/batik-util.jar"/>
+     <zipfileset src="resources/jfreechart/batik-ext.jar"/>
+     <zipfileset src="resources/axiom/axiom-api-1.2.5.jar"/>
+     <zipfileset src="resources/axiom/axiom-dom-1.2.5.jar"/>
+     <zipfileset src="resources/axiom/axiom-impl-1.2.5.jar"/>
+     <zipfileset src="resources/axiom/commons-logging-1.0.4.jar"/>
+     <zipfileset src="resources/axiom/stax-api-1.0.1.jar"/>
+     <zipfileset src="resources/axiom/wstx-asl-3.0.0.jar"/>
+   </jar>
+</target>
+
+
+<!-- Jar the application up -->
+<target name="haploview" depends="compile-haploview">
+   <jar jarfile="Haploview.jar">
+     <fileset dir="${haploview.classes}">
+       <include name="edu/mit/wi/**/**"/>
+     </fileset>
+     <manifest>
+       <attribute name="Built-By" value="${user.name}"/>
+       <attribute name="Main-Class" value="edu.mit.wi.haploview.HaploView"/>
+     </manifest>
+     <zipfileset src="resources/JimiProClasses.zip"/>
+     <zipfileset src="resources/jh.jar"/>
+     <zipfileset src="docs/HaploHelp.jar"/>
+     <zipfileset src="resources/jgrapht-0.5.3.jar"/>
+     <zipfileset src="resources/log4j-1.2.14.jar"/>
+     <zipfileset src="resources/jfreechart/jfreechart-1.0.6.jar"/>
+     <zipfileset src="resources/jfreechart/jcommon-1.0.10.jar"/>
+     <zipfileset src="resources/jfreechart/batik-xml.jar"/>
+     <zipfileset src="resources/jfreechart/xml-apis.jar"/>
+     <zipfileset src="resources/jfreechart/batik-awt-util.jar"/>
+     <zipfileset src="resources/jfreechart/batik-dom.jar"/>
+     <zipfileset src="resources/jfreechart/batik-svggen.jar"/>
+     <zipfileset src="resources/jfreechart/batik-util.jar"/>
+     <zipfileset src="resources/jfreechart/batik-ext.jar"/>
+     <zipfileset src="resources/axiom/axiom-api-1.2.5.jar"/>
+     <zipfileset src="resources/axiom/axiom-dom-1.2.5.jar"/>
+     <zipfileset src="resources/axiom/axiom-impl-1.2.5.jar"/>
+     <zipfileset src="resources/axiom/commons-logging-1.0.4.jar"/>
+     <zipfileset src="resources/axiom/stax-api-1.0.1.jar"/>
+     <zipfileset src="resources/axiom/wstx-asl-3.0.0.jar"/>
+   </jar>
+</target>
+
+<target name="clean" depends="init">
+  <delete dir="${haploview.build}"/>
+</target>
+
+<target name="main" depends="init">
+  <echo message="------------------------------------------------------------"/>
+  <echo message="welcome to haploview build file"/>
+  <echo message="Usage: ant [target-name]"/>
+  <echo message="where [target-name] is one of the following targets:"/>
+  <echo message="compile-haploview --> compiles the haploview classes
+  only"/>
+  <echo message="haploview-release --> makes 'wrapped' jar with auto Xmx"/>
+  <echo message="haploview --> makes the executable jar file"/>
+  <echo message="clean --> cleans up after itself removing the build directory"/>
+  <echo message="------------------------------------------------------------"/>
+</target>
+
+
+</project>
